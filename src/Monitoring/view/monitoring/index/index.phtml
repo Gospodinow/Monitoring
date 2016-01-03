@@ -1,0 +1,90 @@
+<div id="balance" style="width: 100%;height: 300px;"></div>
+<div id="system" style="width: 100%;height: 300px;"></div>
+
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://www.google.com/jsapi"></script>
+<script>
+    var $j = jQuery.noConflict();
+    google.load("visualization", "1", {packages: ["corechart", "gauge"]});
+
+    (function ($) {
+        var interval = function () {
+            var params = [];
+            var wait   = 5000;
+            
+            $.ajax({
+                type : 'POST',
+                url: "?data=true",
+                data: params,
+            }).done(function (data) {
+                
+                /**
+                 * Balance
+                 */
+                var gdata = new google.visualization.DataTable();
+                gdata.addColumn('string', 'Minute');
+                gdata.addColumn('number', 'Reqests');
+                gdata.addColumn('number', 'Db Reqests');
+                gdata.addColumn('number', 'Time');
+                gdata.addColumn('number', 'Db Time');
+                
+                for (var i in data['balance']) {
+                    var row = data['balance'][i];
+                    gdata.addRow([i, row['count'], row['queries_count'], row['time'], row['queries_time']]);
+                    
+                }
+                
+                var options = {
+                    title: 'App Monitoring',
+                    vAxis: {title: 'Count'},
+                    hAxis: {title: 'Minute'},
+                    seriesType: 'bars',
+                    series: {
+//                        0 : {type: 'bars', targetAxisIndex : 0},
+                        2 : {type: 'line', targetAxisIndex : 1},
+                        3 : {type: 'line', targetAxisIndex : 1}
+                    }
+                };
+
+                var chart = new google.visualization.ComboChart(document.getElementById('balance'));
+                chart.draw(gdata, options);
+                
+                /**
+                 * System
+                 */
+                var gdata = new google.visualization.DataTable();
+                gdata.addColumn('string', 'Minute');
+                gdata.addColumn('number', 'Total memory');
+                gdata.addColumn('number', 'Used system memory');
+                gdata.addColumn('number', 'Used php memory');
+                gdata.addColumn('number', 'CPU%');
+                
+                for (var i in data['balance']) {
+                    var row = data['balance'][i];
+                    gdata.addRow([i, row['ram_total'], row['ram_used'], row['ram_used_php'], row['cpu']]);
+                    
+                }
+                
+                var options = {
+                    title: 'System monitoring',
+                    vAxis: {title: 'MB', maxValue: 1},
+                    hAxis: {title: 'Minute'},
+                    seriesType: 'bars',
+                    series: {
+//                        0 : {type: 'bars', targetAxisIndex : 0},
+                        3 : {type: 'line', targetAxisIndex : 1}
+                    }
+                };
+
+                var chart = new google.visualization.ComboChart(document.getElementById('system'));
+                chart.draw(gdata, options);
+                
+                
+            }).always(function () {
+                setTimeout(interval, wait);
+            });
+        };
+        
+        interval();
+    })($j);
+</script>

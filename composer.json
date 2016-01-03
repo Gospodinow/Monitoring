@@ -1,0 +1,26 @@
+{
+    "name":              "Gospodinow/Monitoring",
+    "description":       "Zf2 app monitoring",
+    "type":              "library",
+    "license":           "MIT",
+    "keywords":          [
+        "monitoring",
+        "zf2"
+    ],
+    "authors":           [
+        {
+            "name":     "Ivan Gospodinow",
+            "email":    "ivangospodinow@gmail.com",
+            "homepage": "http://ivangospodinow.com/"
+        }
+    ],
+    "require":           {
+        "php":                               ">=5.4",
+        "zendframework/zendframework":        "2.*"
+    },
+    "autoload":          {
+        "psr-0": {
+            "Monitoring\\": "src/"
+        }
+    }
+}
